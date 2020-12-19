@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZRA12_05F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZRA12_05F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZRA12_05F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZRA12_05F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SET_INIT_VALUE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_init_value .
+  p_carrid = 'LH'.
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form EXEC_INST_METHOD</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM exec_inst_method .
+
+  DATA : lv_subrc TYPE sy-subrc.
+
+  IF go_flight IS INITIAL.    " #####
+    CREATE OBJECT go_flight. " #####
+  ENDIF.
+
+<font color ="#0000FF">** Using short syntax</font>
+  go_flight-&gt;get_booking_info( EXPORTING i_carrid = p_carrid    " ####
+                               IMPORTING e_subrc = lv_subrc     " ####
+                               CHANGING t_book  = gt_flight ).  " ## ###
+
+  IF lv_subrc EQ 0.
+
+    LOOP AT gt_flight INTO gs_flight.
+<font color ="#0000FF">*      WRITE : / gs_flight.</font>
+    ENDLOOP.
+
+  ENDIF.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form EXEC_STATIC_INST_METHOD</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM exec_static_inst_method .
+
+  DATA : lv_subrc TYPE sy-subrc.
+
+  IF go_flight IS INITIAL.
+    CREATE OBJECT go_flight.
+  ENDIF.
+
+<font color ="#0000FF">*  go_flight=&gt;get_flight_info( EXPORTING i_carrid = p_carrid</font>
+<font color ="#0000FF">*                              IMPORTING e_subrc = lv_subrc</font>
+<font color ="#0000FF">*                              CHANGING t_flight = gt_flight ).</font>
+
+  IF lv_subrc EQ 0.
+    WRITE :/ 'static sucess'.
+  ELSE.
+    WRITE :/ 'static fail'.
+  ENDIF.
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form GET_FLIGHT_INFO</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;P_T_FLIGHT  text</font>
+<font color ="#0000FF">*      --&gt;P_I_CARRID  text</font>
+<font color ="#0000FF">*      &lt;--P_E_SUBRC  text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM get_flight_info  TABLES   pt_flight "STRUCTURE gs_flight
+                      USING    pv_carrid
+                      CHANGING pv_subrc.
+
+  SELECT *
+    INTO CORRESPONDING FIELDS OF TABLE pt_flight
+    FROM sflight
+    WHERE carrid EQ pv_carrid.
+
+  IF sy-subrc EQ 0.
+    pv_subrc = 0.
+    WRITE :/ 'static sucess'.
+  ELSE.
+    pv_subrc = 4.
+    WRITE :/ 'static fail'.
+  ENDIF.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form EXEC_STATIC_METHOD</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM exec_static_method .
+
+  DATA : lv_msg TYPE char50.
+
+  lcl_flight_info=&gt;get_flight_info( EXPORTING i_carrid = p_carrid
+                                    IMPORTING e_msg = lv_msg
+                                    CHANGING t_flight = gt_sflight ).
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form GLOBAL_BOOK_INFO</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM global_book_info .
+
+  DATA : lt_data TYPE zlvc_t_a12_03.
+
+  IF go_book IS INITIAL.
+
+    CREATE OBJECT go_book.
+
+  ENDIF.
+
+  CALL METHOD go_book-&gt;get_booking_info
+    EXPORTING
+      iv_carrid = p_carrid
+    CHANGING
+      t_book    = lt_data.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form GLOBAL_FLIGHT_INFO</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM global_flight_info .
+
+  DATA : lt_data TYPE zlvc_t_a12_04,
+         iv_subrc  TYPE sy-subrc.
+
+
+  IF go_flight IS INITIAL.
+    CREATE OBJECT go_flight.
+  ENDIF.
+
+  CALL METHOD zcl_a12_02=&gt;get_flight_info
+    EXPORTING
+      iv_carrid = p_carrid
+
+    CHANGING
+      et_data   = lt_data
+      cv_subrc = iv_subrc.
+
+  IF iv_subrc EQ 0.
+
+    WRITE :/ 'global static sucess'.
+  ELSE.
+
+    WRITE :/ 'global static fail'.
+  ENDIF.
+
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 751
+</font>
+</body>
+</html>

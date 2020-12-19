@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZRA12_04F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZRA12_04F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZRA12_04F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZRA12_04F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SET_INIT_VALUE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_init_value .
+
+  s_carrid-sign = 'I'.
+  s_carrid-option = 'BT'.
+  s_carrid-low = 'AA'.
+  s_carrid-high = 'QF'.
+
+  APPEND s_carrid.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form GET_FLIGHT_INFO</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM get_flight_info .
+
+
+<font color ="#0000FF">** Join spfli & sflight</font>
+  CLEAR gt_flight.
+  SELECT a~carrid a~connid fldate cityfrom cityto currency planetype
+    INTO CORRESPONDING FIELDS OF TABLE gt_flight
+    FROM spfli AS a INNER JOIN sflight AS b
+      ON a~carrid EQ b~carrid
+    WHERE a~carrid IN s_carrid.
+
+<font color ="#0000FF">** Check Master Data existence.</font>
+  IF gt_flight IS INITIAL.
+
+    MESSAGE s037 DISPLAY LIKE 'E'.
+    STOP.
+
+  ENDIF.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form MAKE_BODY</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM make_body .
+
+  DATA : lv_tabix TYPE sy-tabix.            "## # ### ### #### ###
+
+  LOOP AT gt_flight INTO gs_flight.
+
+    lv_tabix = sy-tabix.
+
+
+<font color ="#0000FF">** Check Planetype</font>
+<font color ="#0000FF">*    CLEAR gs_sflight.</font>
+<font color ="#0000FF">*    READ TABLE gt_flight INTO gs_flight WITH KEY carrid = gs_flight-carrid.      " carrid# gs_flight# ###### ## ## # ### ##</font>
+<font color ="#0000FF">*    IF sy-subrc EQ 0.</font>
+
+    CASE gs_flight-planetype.
+      WHEN 'A380-800'.
+        gs_flight-icon = icon_ws_plane.
+
+    ENDCASE.
+
+    MODIFY gt_flight FROM gs_flight INDEX lv_tabix TRANSPORTING icon.
+
+<font color ="#0000FF">*    ENDIF.</font>
+
+  ENDLOOP.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form WRITE_LIST</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM write_list .
+
+  LOOP AT gt_flight INTO gs_flight.
+
+    WRITE :/ gs_flight-icon,' ', gs_flight-carrid, ' ',
+      gs_flight-connid,' ', gs_flight-fldate, ' ',
+      gs_flight-cityfrom, ' ', gs_flight-cityto, ' ',
+      gs_flight-currency, ' ', gs_flight-planetype.
+
+  ENDLOOP.
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 751
+</font>
+</body>
+</html>

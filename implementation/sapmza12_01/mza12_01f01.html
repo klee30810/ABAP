@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>MZA12_01F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: MZA12_01F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include MZA12_01F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          MZA12_01F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form GET_AIRLINE_DATA</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM get_airline_data .
+
+<font color ="#0000FF">** Get airline data</font>
+  CLEAR : gv_carrname, gv_currcode, gv_url.
+  SELECT SINGLE carrname currcode url
+    INTO ( gv_carrname, gv_currcode, gv_url )        "### ##### ##### corresponding ##
+    FROM scarr
+    WHERE carrid EQ gv_carrid.
+
+<font color ="#0000FF">** Set icon</font>
+  CASE gv_carrid.
+    WHEN 'AA' OR 'DL'.
+      gv_icon = icon_ws_plane.
+    WHEN 'KA'.
+      gv_icon = icon_activate.
+      gv_url = 'hello world!'.
+    WHEN OTHERS.
+      CLEAR gv_icon.
+  ENDCASE.
+
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 751
+</font>
+</body>
+</html>
