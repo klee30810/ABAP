@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZRA12_16</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZRA12_16</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Tax Open Item List</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Report ZRA12_16</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+
+include <a href ="zra12_16top.html">zra12_16top</a>.    " Global Data
+
+include <a href ="zra12_16s01.html">zra12_16s01</a>.  " Selection Screen
+include <a href ="zra12_16c01.html">zra12_16c01</a>.  " Class instances
+include <a href ="zra12_16o01.html">zra12_16o01</a>.  " PBO-Modules
+include <a href ="zra12_16i01.html">zra12_16i01</a>.  " PAI-Modules
+include <a href ="zra12_16f01.html">zra12_16f01</a>.  " FORM-Routines
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* INITIALIZATION.</font>
+<font color ="#0000FF">**********************************************************************</font>
+INITIALIZATION.
+  PERFORM set_init_value.
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* START-OF-SELECTION.</font>
+<font color ="#0000FF">**********************************************************************</font>
+START-OF-SELECTION.
+  PERFORM get_tax_info.
+
+
+  CALL SCREEN 100.
+
+<font color ="#0000FF">*GUI Texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* TITLE100 --&gt; TAX Open Item List</font>
+<font color ="#0000FF">* TITLE101 --&gt; AP2 popup title</font>
+
+<font color ="#0000FF">*Text elements</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* E01 Job Failed!!</font>
+<font color ="#0000FF">* T01 Conditions</font>
+<font color ="#0000FF">* T02 Line time</font>
+
+
+<font color ="#0000FF">*Selection texts</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">* P_BUKRS D       .</font>
+<font color ="#0000FF">* P_GJAHR D       .</font>
+<font color ="#0000FF">* S_BUDAT D       .</font>
+
+
+<font color ="#0000FF">*Messages</font>
+<font color ="#0000FF">*----------------------------------------------------------</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">* Message class: K5</font>
+<font color ="#0000FF">*001   & & & &</font>
+<font color ="#0000FF">*037   No data found</font>
+<font color ="#0000FF">*102   Data has been saved</font>
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 751
+</font>
+</body>
+</html>

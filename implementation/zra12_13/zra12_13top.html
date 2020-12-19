@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZRA12_13TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZRA12_13TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZRA12_13TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include ZRA12_13TOP                              - Report ZRA12_13</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT ZRA12_13 MESSAGE-ID k5.
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">*</font>
+<font color ="#0000FF">**********************************************************************</font>
+DATA : BEGIN OF gs_sum,
+      racct TYPE faglflext-racct,   " G/L ACcount
+      hsl01 TYPE faglflext-hsl01,   " ## ##
+      hsl02 TYPE faglflext-hsl02,   " ## ##
+      hsl03 TYPE faglflext-hsl03,   " ## ##
+      hsl04 TYPE faglflext-hsl04,   " ## ##
+      hsl05 TYPE faglflext-hsl05,   " ## ##
+      hsl06 TYPE faglflext-hsl06,   " ## ##
+      hsl07 TYPE faglflext-hsl07,   " ## ##
+      hsl08 TYPE faglflext-hsl08,   " ## ##
+      hsl09 TYPE faglflext-hsl09,   " ## ##
+      hsl10 TYPE faglflext-hsl10,   " ## ##
+      hsl11 TYPE faglflext-hsl11,   " ## ##
+      hsl12 TYPE faglflext-hsl12,   " ## ##
+  END OF gs_sum.
+
+DATA : gt_sum LIKE TABLE OF gs_sum.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 751
+</font>
+</body>
+</html>

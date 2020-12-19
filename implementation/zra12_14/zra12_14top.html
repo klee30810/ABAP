@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZRA12_14TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZRA12_14TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZRA12_14TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include ZRA12_14TOP                              - Report ZRA12_14</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zra12_14 MESSAGE-ID k5.
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* TABLES</font>
+<font color ="#0000FF">**********************************************************************</font>
+TABLES : mkpf, mseg, mara.
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* Class Instances</font>
+<font color ="#0000FF">**********************************************************************</font>
+DATA : go_container TYPE REF TO cl_gui_docking_container,
+       go_alv_grid  TYPE REF TO cl_gui_alv_grid.
+
+DATA : go_pop_cont TYPE REF TO cl_gui_custom_container,
+       go_pop_alv  TYPE REF TO cl_gui_alv_grid.
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* Internal tables & Work areas</font>
+<font color ="#0000FF">**********************************************************************</font>
+DATA : BEGIN OF gs_material,
+         mblnr    TYPE mkpf-mblnr,
+         mjahr    TYPE mkpf-mjahr,
+         blart    TYPE mkpf-blart,
+         blaum    TYPE mkpf-blaum,
+         budat    TYPE mkpf-budat,
+         awsys    TYPE mkpf-awsys,
+         le_vbeln TYPE mkpf-le_vbeln,
+       END OF gs_material.
+
+DATA : gt_material LIKE TABLE OF gs_material.
+
+DATA : gt_fcat   TYPE lvc_t_fcat,
+       gs_fcat   TYPE lvc_s_fcat,
+       gs_layout TYPE lvc_s_layo.
+
+
+<font color ="#0000FF">** For pop-up</font>
+DATA : BEGIN OF gs_pop,
+         mblnr TYPE mseg-mblnr,
+         zeile TYPE mseg-zeile,
+         bwart TYPE mseg-bwart,
+         matnr TYPE mseg-matnr,
+<font color ="#0000FF">*         maktx TYPE makt-maktx,</font>
+       END OF gs_pop.
+
+DATA : gt_pop  TYPE TABLE OF zmsega12_01,
+       gt_makt TYPE TABLE OF makt,
+       gs_makt TYPE makt.
+
+DATA : gt_pop_fcat   TYPE lvc_t_fcat,
+       gs_pop_fcat   TYPE lvc_s_fcat,
+       gs_pop_layout TYPE lvc_s_layo.
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* Common variable</font>
+<font color ="#0000FF">**********************************************************************</font>
+DATA : gv_okcode  TYPE sy-ucomm,
+       gv_linecnt TYPE i.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 751
+</font>
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZRA12_16F01</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZRA12_16F01</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZRA12_16F01</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include          ZRA12_16F01</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SET_INIT_VALUE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_init_value .
+
+  p_bukrs = 'L100'.
+  p_gjahr = '2016'.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form GET_TAX_INFO</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM get_tax_info .
+
+  DATA : lt_tax LIKE TABLE OF gs_tax.
+
+  CLEAR gt_tax.
+  SELECT a~bukrs a~gjahr a~belnr blart budat waers hwbas hwste ktosl kschl
+    INTO CORRESPONDING FIELDS OF TABLE gt_tax
+    FROM bkpf AS a INNER JOIN bset AS b
+      ON ( a~bukrs EQ b~bukrs )
+      AND ( a~gjahr EQ b~gjahr )
+      AND ( a~belnr EQ b~belnr )
+    WHERE a~bukrs EQ p_bukrs
+      AND a~gjahr EQ p_gjahr
+      AND a~budat IN s_budat.
+
+  gv_linecnt = lines( gt_tax ).
+
+  IF sy-subrc NE 0.
+    MESSAGE s037 DISPLAY LIKE 'E'.
+    STOP.
+
+  ELSE.
+    MESSAGE s001 WITH gv_linecnt 'Lines' 'selected!!'.
+
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DISPLAY_SCREEN</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_screen .
+
+  CLEAR : gt_fcat, gs_fcat.
+  PERFORM set_field_catalog USING : 'X' 'BUKRS' 'Company'         ' ',
+                                    'X' 'GJAHR' 'Fiscal year'     ' ',
+                                    'X' 'BELNR' 'Doc. no'         ' ',
+                                    ' ' 'BLART' 'Doc type'        ' ',
+                                    ' ' 'BUDAT' 'Posting date'    ' ',
+                                    ' ' 'WAERS' 'Currency'        ' ',
+                                    ' ' 'HWBAS' 'Tax base amount' 'X',
+                                    ' ' 'HWSTE' 'Tax amount'      ' ',
+                                    ' ' 'KTOSL' 'Transaction'     ' ',
+                                    ' ' 'KSCHL' 'Condition type'  ' '.
+
+  PERFORM set_layout.
+
+  IF go_container IS INITIAL.
+
+    PERFORM create_object.
+
+    SET HANDLER : lcl_event_handler=&gt;on_double_click FOR go_alv_grid,
+                  lcl_event_handler=&gt;on_hotspot FOR go_alv_grid.
+
+    CALL METHOD go_alv_grid-&gt;set_table_for_first_display
+      EXPORTING
+        i_save                        = 'A'
+        i_default                     = 'X'
+        is_layout                     = gs_layout
+      CHANGING
+        it_outtab                     = gt_tax
+        it_fieldcatalog               = gt_fcat
+      EXCEPTIONS
+        invalid_parameter_combination = 1
+        program_error                 = 2
+        too_many_lines                = 3
+        OTHERS                        = 4.
+
+  ELSE.
+    CALL METHOD go_alv_grid-&gt;refresh_table_display.
+
+  ENDIF.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SET_FIELD_CATALOG</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;P_       text</font>
+<font color ="#0000FF">*      --&gt;P_       text</font>
+<font color ="#0000FF">*      --&gt;P_       text</font>
+<font color ="#0000FF">*      --&gt;P_       text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_field_catalog  USING  pv_key pv_fieldname pv_text pv_emphasize.
+
+  gs_fcat-key             = pv_key.
+  gs_fcat-fieldname             = pv_fieldname.
+  gs_fcat-coltext             = pv_text.
+  gs_fcat-emphasize             = pv_emphasize.
+
+  CASE gs_fcat-fieldname.
+    WHEN 'BELNR'.
+      gs_fcat-hotspot = 'X'.
+
+  ENDCASE.
+
+  APPEND gs_fcat TO gt_fcat.
+  CLEAR gs_fcat.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SET_LAYOUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_layout .
+
+  gs_layout-zebra     = 'X'.
+  gs_layout-cwidth_opt     = 'X'.
+  gs_layout-sel_mode     = 'D'.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CREATE_OBJECT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_object .
+
+  CREATE OBJECT go_container
+    EXPORTING
+      repid     = sy-repid
+      dynnr     = sy-dynnr
+      side      = go_container-&gt;dock_at_left
+      extension = 3000.
+
+  CREATE OBJECT go_alv_grid
+    EXPORTING
+      i_parent = go_container.
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form ON_DOUBLE_CLICK</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;P_E_COLUMN  text</font>
+<font color ="#0000FF">*      --&gt;P_E_ROW  text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM on_double_click  USING   pv_column pv_row.
+
+  DATA : lv_subrc TYPE char01.
+
+  CLEAR gs_tax.
+  READ TABLE gt_tax INTO gs_tax INDEX pv_row.
+
+  call function <a href ="zfm_bseg_a12_02/zfm_bseg_a12_02.html">'ZFM_BSEG_A12_02'</a>
+    EXPORTING
+      iv_bukrs        = p_bukrs
+      iv_gjahr        = p_gjahr
+      iv_belnr        = gs_tax-belnr
+    IMPORTING
+      ev_subrc        = lv_subrc
+    TABLES
+      et_item         = gt_pop
+    EXCEPTIONS
+      empty_parameter = 1
+      OTHERS          = 2.
+
+  IF sy-subrc EQ 0.
+    CALL SCREEN 101 STARTING AT 03 03.
+  ENDIF.
+
+
+
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form ON_HOTSPOT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;P_E_COLUMN_ID  text</font>
+<font color ="#0000FF">*      --&gt;P_E_ROW_ID  text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM on_hotspot  USING    pv_column_id    pv_row_id.
+
+  CLEAR gs_tax.
+  READ TABLE gt_tax INTO gs_tax INDEX pv_row_id.
+
+  SET PARAMETER ID : 'BUK' FIELD p_bukrs,
+                     'BLN' FIELD gs_tax-belnr,
+                     'GJA' FIELD p_gjahr.
+
+  CALL TRANSACTION 'FB03' AND SKIP FIRST SCREEN.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DISPLAY_POPUP</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM display_popup .
+
+  CLEAR : gs_pop_fcat, gt_pop_fcat.
+  PERFORM set_pop_catalog USING : 'X' 'BELNR' 'Doc. no'       ' ',
+                                  'X' 'BUZEI' 'Itm. no'       ' ',
+                                  ' ' 'HKONT' 'G/L Account'   ' ',
+                                  ' ' 'MATNR' 'Material'      ' ',
+                                  ' ' 'WERKS' 'Plant'         ' ',
+                                  ' ' 'MENGE' 'Quantity'      ' ',
+                                  ' ' 'MEINS' 'Unit'          'X',
+                                  ' ' 'SGTXT' 'Remark'        ' '.
+
+  PERFORM pop_layout.
+
+  IF go_pop_cont IS INITIAL.
+
+    PERFORM create_pop_object.
+
+    CALL METHOD go_pop_alv-&gt;set_table_for_first_display
+      EXPORTING
+        i_save                        = 'A'
+        i_default                     = 'X'
+        is_layout                     = gs_pop_layout
+      CHANGING
+        it_outtab                     = gt_pop
+        it_fieldcatalog               = gt_pop_fcat
+      EXCEPTIONS
+        invalid_parameter_combination = 1
+        program_error                 = 2
+        too_many_lines                = 3
+        OTHERS                        = 4.
+
+  ELSE.
+    CALL METHOD go_pop_alv-&gt;refresh_table_display.
+  ENDIF.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form SET_POP_CATALOG</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*      --&gt;P_       text</font>
+<font color ="#0000FF">*      --&gt;P_       text</font>
+<font color ="#0000FF">*      --&gt;P_       text</font>
+<font color ="#0000FF">*      --&gt;P_       text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM set_pop_catalog  USING  pv_key pv_fieldname pv_text pv_emphasize.
+
+  gs_pop_fcat-key       = pv_key.
+  gs_pop_fcat-fieldname       = pv_fieldname.
+  gs_pop_fcat-coltext       = pv_text.
+  gs_pop_fcat-emphasize       = pv_emphasize.
+
+  CASE pv_fieldname.
+    WHEN 'MENGE'.
+      gs_pop_fcat-qfieldname = 'MEINS'.
+
+  ENDCASE.
+
+  APPEND gs_pop_fcat TO gt_pop_fcat.
+  CLEAR gs_pop_fcat.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form POP_LAYOUT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM pop_layout .
+
+  gs_pop_layout-zebra       = 'X'.
+  gs_pop_layout-cwidth_opt       = 'X'.
+  gs_pop_layout-sel_mode       = 'D'.
+  gs_pop_layout-no_toolbar       = 'X'.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form CREATE_POP_OBJECT</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM create_pop_object .
+
+  CREATE OBJECT go_pop_cont
+    EXPORTING
+      container_name = 'POPCON'.
+
+  CREATE OBJECT go_pop_alv
+    EXPORTING
+      i_parent = go_pop_cont.
+
+ENDFORM.
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Form DATA_SAVE</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& --&gt;  p1        text</font>
+<font color ="#0000FF">*& &lt;--  p2        text</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+FORM data_save .
+
+  DATA : lt_save TYPE TABLE OF zta12_08,
+        ls_save TYPE zta12_08.
+
+  DATA : lv_answer.
+
+  CALL FUNCTION 'POPUP_TO_CONFIRM_STEP'
+    EXPORTING
+     DEFAULTOPTION        = 'Y'
+      textline1            = 'Save?'
+      titel                = 'Save confirm'
+   IMPORTING
+     ANSWER               = lv_answer.
+
+  IF lv_answer NE 'J'.
+    EXIT.
+
+  ENDIF.
+
+
+  CLEAR lt_save.
+  LOOP AT gt_tax INTO gs_tax.
+
+    MOVE-CORRESPONDING gs_tax TO ls_save.
+
+    ls_save-erdat = sy-datum.
+    ls_save-ernam = sy-uname.
+    ls_save-erzet = sy-uzeit.
+    ls_save-aedat = sy-datum.
+    ls_save-aenam = sy-uname.
+    ls_save-aezet = sy-uzeit.
+
+    APPEND ls_save TO lt_save.
+    CLEAR ls_save.
+
+  ENDLOOP.
+
+
+  modify zta12_08 FROM TABLE lt_save.
+
+  IF sy-subrc EQ 0.
+    COMMIT WORK.
+    MESSAGE s102.
+
+  ELSE.
+    ROLLBACK WORK.
+    MESSAGE s001 WITH TEXT-e01 DISPLAY LIKE 'E'.
+
+  ENDIF.
+
+
+ENDFORM.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 751
+</font>
+</body>
+</html>
