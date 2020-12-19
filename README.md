@@ -23,6 +23,5 @@ Explanation of ZRA12_11 on [HERE](https://kmlee.xyz/SAP-ABAP-List-View-Project-1
 |ZRA12_14    | Material Document |           
 |ZRA12_15    | FI Document Posting  |        
 |ZRA12_16    | Tax Open Item List   |          
-| col 2 is |    centered   |
-| col 3 is | right-aligned |
+
 
