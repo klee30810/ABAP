@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZRA12_09TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZRA12_09TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZRA12_09TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include ZRA12_09TOP                              - Report ZRA12_09</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zra12_09 MESSAGE-ID k5.
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* TABLES</font>
+<font color ="#0000FF">**********************************************************************</font>
+TABLES : bsis, bkpf, bseg.
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* Class Instances</font>
+<font color ="#0000FF">*********************************************************************</font>
+DATA : go_container TYPE REF TO cl_gui_docking_container,         " container# #### ### ##. ### ## ## ####
+       go_alv_grid  TYPE REF TO cl_gui_alv_grid.
+
+<font color ="#0000FF">** for popup screen to adjust screen size</font>
+DATA : go_pop_cont TYPE REF TO cl_gui_custom_container,
+       go_pop_alv  TYPE REF TO cl_gui_alv_grid.
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* Internal tables & Work areas</font>
+<font color ="#0000FF">**********************************************************************</font>
+DATA : BEGIN OF gs_finance,
+         bukrs TYPE bkpf-bukrs, " ####
+         belnr TYPE bkpf-belnr, " ####
+         blart TYPE bkpf-blart, " ####
+         budat TYPE bkpf-budat, " ###
+         dmbtr TYPE bsis-dmbtr, " ### : ### ## ### # #### ## ### ### ### # ### #### ##. Currency Key (Cfield)
+         waers TYPE bkpf-waers, " ####
+         hkont TYPE bsis-hkont, " G/L##
+         txt50 TYPE skat-txt50, " G/L ###
+         mwskz TYPE bsis-mwskz, " ####
+
+       END OF gs_finance.
+
+DATA : gt_finance LIKE TABLE OF gs_finance.
+
+DATA : gt_fcat   TYPE lvc_t_fcat,
+       gs_fcat   TYPE lvc_s_fcat,
+       gs_layout TYPE lvc_s_layo.
+
+<font color ="#0000FF">** For pop-up : Different ALV needs different internal tables & field catalog</font>
+DATA : BEGIN OF gs_pop,
+         belnr TYPE bseg-belnr,  " ####
+         buzei TYPE bseg-buzei,  " #### ##
+         hkont TYPE bseg-hkont,  " G/L ##
+         matnr TYPE bseg-matnr,  " ####
+         werks TYPE bseg-werks,  " #####
+         menge TYPE bseg-menge,  " ##
+         meins TYPE bseg-meins,  " ## : ### ## ### # #### ## ### ### ### # ### #### ##. Quantity (Qfield)
+         sgtxt TYPE bseg-sgtxt,  " #### ##
+       END OF gs_pop.
+
+DATA : gt_pop  TYPE TABLE OF zbsega12_01,        " function module# ## ## structure
+<font color ="#0000FF">*      gt_pop LIKE TABLE OF gs_pop.</font>
+       gt_skat TYPE TABLE OF skat,
+       gs_skat TYPE skat.
+
+DATA : gt_pop_fcat   TYPE lvc_t_fcat,
+       gs_pop_fcat   TYPE lvc_s_fcat,
+       gs_pop_layout TYPE lvc_s_layo.
+
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* Common variable</font>
+<font color ="#0000FF">**********************************************************************</font>
+DATA : gv_okcode  TYPE sy-ucomm,     " Can be applied to every class
+       gv_linecnt TYPE i.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 751
+</font>
+</body>
+</html>

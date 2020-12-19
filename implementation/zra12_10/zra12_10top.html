@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ZRA12_10TOP</title>
+</head>
+<body bgcolor="#FFFFE0">
+<font size="3" face = "Arial" color="#000000"><b>Code listing for: ZRA12_10TOP</b></font>
+<br>
+<font size="3" face = "Arial" color="#000000"><b>Description:  Include ZRA12_10TOP</b></font>
+<hr>
+<pre width="100">
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+<font color ="#0000FF">*& Include ZRA12_10TOP                              - Report ZRA12_10</font>
+<font color ="#0000FF">*&---------------------------------------------------------------------*</font>
+REPORT zra12_10 MESSAGE-ID k5.
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* TABLES</font>
+<font color ="#0000FF">**********************************************************************</font>
+TABLES : bkpf, bsik, bseg.
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* Class Instances</font>
+<font color ="#0000FF">**********************************************************************</font>
+DATA : go_container TYPE REF TO cl_gui_docking_container,
+       go_alv_grid  TYPE REF TO cl_gui_alv_grid.
+
+<font color ="#0000FF">** popup screen</font>
+DATA : go_pop_cont TYPE REF TO cl_gui_custom_container,
+       go_pop_alv  TYPE REF TO cl_gui_alv_grid.
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* Internal tables & Work Areas</font>
+<font color ="#0000FF">**********************************************************************</font>
+DATA : BEGIN OF gs_finance,
+         bukrs TYPE bkpf-bukrs,
+         belnr TYPE bkpf-belnr,
+         blart TYPE bkpf-blart,
+         budat TYPE bkpf-budat,
+         waers TYPE bkpf-waers,
+         lifnr TYPE bsik-lifnr,
+         name1 TYPE lfa1-name1,     " name field of lifnr
+         zterm TYPE bsik-zterm,
+         dmbtr TYPE bsik-dmbtr,
+       END OF gs_finance.
+
+DATA : gt_finance LIKE TABLE OF gs_finance,
+       gt_lfa1    TYPE TABLE OF lfa1,
+       gs_lfa1    TYPE lfa1.
+
+
+DATA : gt_fcat   TYPE lvc_t_fcat,
+       gs_fcat   TYPE lvc_s_fcat,
+       gs_layout TYPE lvc_s_layo.
+
+<font color ="#0000FF">** popup screen</font>
+DATA : BEGIN OF gs_pop,
+         belnr TYPE bseg-belnr,
+         buzei TYPE bseg-buzei,
+         hkont TYPE bseg-hkont,
+         matnr TYPE bseg-matnr,
+         werks TYPE bseg-werks,
+         menge TYPE bseg-menge,
+         meins TYPE bseg-meins,
+         sgtxt TYPE bseg-sgtxt,
+       END OF gs_pop.
+
+DATA : gt_pop TYPE TABLE OF zbsega12_01.
+<font color ="#0000FF">*      gt_pop LIKE TABLE OF gs_pop.</font>
+
+DATA : gt_pop_fcat   TYPE lvc_t_fcat,
+       gs_pop_fcat   TYPE lvc_s_fcat,
+       gs_pop_layout TYPE lvc_s_layo.
+
+
+<font color ="#0000FF">**********************************************************************</font>
+<font color ="#0000FF">* Common variables</font>
+<font color ="#0000FF">**********************************************************************</font>
+DATA : gv_okcode  TYPE sy-ucomm,
+       gv_linecnt TYPE i.
+</pre>
+<hr>
+<font size="2" face = "Sans Serif">Extracted by Direct Download Enterprise version 1.3.1 - E.G.Mellodew. 1998-2005 UK. Sap Release 751
+</font>
+</body>
+</html>
